@@ -16,8 +16,8 @@ public class UserResponseDTO {
     private String lastName;
     private String email;
     private String phone;
-    private String createdBy; // Tidak bisa diubah
-    private String updatedBy; // Selalu diupdate
+    private String createdBy; 
+    private String updatedBy; 
     private LocalDateTime createdDatetime;
     private LocalDateTime updatedDatetime;
 }

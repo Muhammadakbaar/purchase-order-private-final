@@ -19,5 +19,5 @@ public class PurchaseOrderHeaderResponseDTO {
     private LocalDateTime createdDatetime;
     private String updatedBy;
     private LocalDateTime updatedDatetime;
-    private List<PurchaseOrderDetailResponseDTO> details; // List detail
+    private List<PurchaseOrderDetailResponseDTO> details; 
 }

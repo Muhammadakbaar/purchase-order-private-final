@@ -4,8 +4,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Email;
 
 @Data
@@ -26,5 +24,5 @@ public class CreateUserRequestDTO {
     private String phone;
 
     @NotBlank(message = "Created by cannot be blank")
-    private String createdBy; // Wajib diinput client
+    private String createdBy; 
 }

@@ -24,5 +24,5 @@ public class CreateItemRequestDTO {
     @NotBlank(message = "Created by cannot be blank")
     private String createdBy;
 
-    private String  updatedBy;
+    private String updatedBy;
 }

@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Builder
 public class PurchaseOrderDetailDTO {
     private Integer id;
-    private Integer pohId; // Purchase Order Header ID
+    private Integer pohId; 
     private Integer itemId;
     private Integer itemQty;
     private BigDecimal itemCost;

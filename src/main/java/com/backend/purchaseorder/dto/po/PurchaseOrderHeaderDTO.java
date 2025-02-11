@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,5 +20,5 @@ public class PurchaseOrderHeaderDTO {
     private BigDecimal totalPrice;
     private String createdBy;
     private String updatedBy;
-    private List<PurchaseOrderDetailDTO> poDetails; // List of PO details
+    private List<PurchaseOrderDetailDTO> poDetails; 
 }

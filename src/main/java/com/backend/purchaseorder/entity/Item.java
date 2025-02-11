@@ -37,7 +37,7 @@ public class Item {
     private String description;
 
     @DecimalMin(value = "0.00", message = "Price must be greater than or equal to 0")
-    @Column(precision = 10, scale = 2) // Contoh: 99999999.99
+    @Column(precision = 10, scale = 2) 
     private BigDecimal price;
 
     @DecimalMin(value = "0.00", message = "Cost must be greater than or equal to 0")

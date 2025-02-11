@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -22,7 +21,6 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    // ----------------------- GET ALL USERS -----------------------
     public List<UserResponseDTO> getAllUsers() {
         log.info("Fetching all users");
         return userRepository.findAll().stream()
@@ -30,7 +28,6 @@ public class UserService {
                 .toList();
     }
 
-    // ----------------------- GET USER BY ID -----------------------
     public UserResponseDTO getUserById(Integer id) {
         log.info("Fetching user with id: {}", id);
         User user = userRepository.findById(id)
@@ -38,9 +35,7 @@ public class UserService {
         return convertToResponseDTO(user);
     }
 
-    // ----------------------- CREATE USER -----------------------
     public UserResponseDTO createUser(CreateUserRequestDTO request) {
-        // Validasi duplikasi email/phone
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
@@ -50,24 +45,21 @@ public class UserService {
             .lastName(request.getLastName())
             .email(request.getEmail())
             .phone(request.getPhone())
-            .createdBy(request.getCreatedBy()) // Diambil dari DTO
-            .updatedBy(request.getCreatedBy()) // Sama dengan createdBy
+            .createdBy(request.getCreatedBy())
+            .updatedBy(request.getCreatedBy())
             .build();
     
         User savedUser = userRepository.save(newUser);
         return convertToResponseDTO(savedUser);
     }
 
-    // ----------------------- UPDATE USER -----------------------
     public UserResponseDTO updateUser(Integer id, UpdateUserRequestDTO request) {
         User existingUser = userRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
     
-        // Update field yang diisi (jika tidak null)
         Optional.ofNullable(request.getFirstName()).ifPresent(existingUser::setFirstName);
         Optional.ofNullable(request.getLastName()).ifPresent(existingUser::setLastName);
         
-        // Validasi email jika diubah
         if (request.getEmail() != null && !request.getEmail().equals(existingUser.getEmail())) {
             if (userRepository.existsByEmail(request.getEmail())) {
                 throw new RuntimeException("Email already exists: " + request.getEmail());
@@ -75,7 +67,6 @@ public class UserService {
             existingUser.setEmail(request.getEmail());
         }
     
-        // Validasi nomor telepon jika diubah
         if (request.getPhone() != null && !request.getPhone().equals(existingUser.getPhone())) {
             if (userRepository.existsByPhone(request.getPhone())) {
                 throw new RuntimeException("Phone already exists: " + request.getPhone());
@@ -83,7 +74,6 @@ public class UserService {
             existingUser.setPhone(request.getPhone());
         }
     
-        // Update audit field
         existingUser.setUpdatedBy(request.getUpdatedBy());
         existingUser.setUpdatedDatetime(LocalDateTime.now());
     
@@ -91,7 +81,6 @@ public class UserService {
         return convertToResponseDTO(updatedUser);
     }
 
-    // ----------------------- DELETE USER -----------------------
     public void deleteUser(Integer id) {
         log.info("Deleting user with id: {}", id);
         if (!userRepository.existsById(id)) {
@@ -100,7 +89,6 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    // ----------------------- CONVERSION METHODS -----------------------
     private UserResponseDTO convertToResponseDTO(User user) {
         return UserResponseDTO.builder()
                 .id(user.getId())

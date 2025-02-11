@@ -6,5 +6,6 @@
 3. Ubah configurasi application.properties sesuai dengan milik anda
 4. Jika anda tidak menginstall maven maka jalankan dengan perntah ./ mvnw spring-boot:run
 5. Jika Sudah berhasil dijalankan anda bisa mencoba API menggunakan postman collection yang sudah tersedia pada resource
+
 ```
 

@@ -19,19 +19,16 @@ public class PurchaseOrderController {
         this.purchaseOrderService = purchaseOrderService;
     }
 
-    // ----------------------- GET ALL PURCHASE ORDERS -----------------------
     @GetMapping
     public ResponseEntity<List<PurchaseOrderHeaderDTO>> getAllPurchaseOrders() {
         return ResponseEntity.ok(purchaseOrderService.getAllPOs());
     }
 
-    // ----------------------- GET PURCHASE ORDER BY ID -----------------------
     @GetMapping("/{id}")
     public ResponseEntity<PurchaseOrderHeaderDTO> getPurchaseOrderById(@PathVariable Integer id) {
         return ResponseEntity.ok(purchaseOrderService.getPOById(id));
     }
 
-    // ----------------------- CREATE PURCHASE ORDER -----------------------
     @PostMapping
     public ResponseEntity<PurchaseOrderHeaderDTO> createPurchaseOrder(
         @Valid @RequestBody PurchaseOrderHeaderDTO request
@@ -40,7 +37,6 @@ public class PurchaseOrderController {
                 .body(purchaseOrderService.createPO(request));
     }
 
-    // ----------------------- UPDATE PURCHASE ORDER -----------------------
     @PutMapping("/{id}")
     public ResponseEntity<PurchaseOrderHeaderDTO> updatePurchaseOrder(
         @PathVariable Integer id,
@@ -49,7 +45,6 @@ public class PurchaseOrderController {
         return ResponseEntity.ok(purchaseOrderService.updatePO(id, request));
     }
 
-    // ----------------------- DELETE PURCHASE ORDER -----------------------
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePurchaseOrder(@PathVariable Integer id) {
         purchaseOrderService.deletePO(id);

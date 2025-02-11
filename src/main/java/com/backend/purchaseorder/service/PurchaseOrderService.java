@@ -9,7 +9,6 @@ import com.backend.purchaseorder.repository.ItemRepository;
 import com.backend.purchaseorder.repository.PurchaseOrderDetailRepository;
 import com.backend.purchaseorder.repository.PurchaseOrderHeaderRepository;
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +27,6 @@ public class PurchaseOrderService {
     private final PurchaseOrderDetailRepository poDRepository;
     private final ItemRepository itemRepository;
 
-    // ----------------------- GET ALL PURCHASE ORDERS -----------------------
     @Transactional(readOnly = true)
     public List<PurchaseOrderHeaderDTO> getAllPOs() {
         return poHRepository.findAll().stream()
@@ -36,7 +34,6 @@ public class PurchaseOrderService {
                 .toList();
     }
 
-    // ----------------------- GET PURCHASE ORDER BY ID -----------------------
     @Transactional(readOnly = true)
     public PurchaseOrderHeaderDTO getPOById(int id) {
         return poHRepository.findById(id)
@@ -44,37 +41,31 @@ public class PurchaseOrderService {
                 .orElseThrow(() -> new RuntimeException("Purchase order not found with ID: " + id));
     }
 
-    // ----------------------- CREATE PURCHASE ORDER -----------------------
     @Transactional
     public PurchaseOrderHeaderDTO createPO(PurchaseOrderHeaderDTO poHDTO) {
-        // Kelompokkan itemId dan jumlahkan qty
         Map<Integer, Integer> itemQuantityMap = poHDTO.getPoDetails().stream()
             .collect(Collectors.toMap(
                 PurchaseOrderDetailDTO::getItemId,
                 PurchaseOrderDetailDTO::getItemQty,
-                Integer::sum // Jumlahkan qty jika itemId duplikat
+                Integer::sum
             ));
 
-        // Validasi item
         List<Integer> itemIds = new ArrayList<>(itemQuantityMap.keySet());
         List<Item> existingItems = itemRepository.findAllById(itemIds);
         if (existingItems.size() != itemIds.size()) {
             throw new RuntimeException("One or more items not found");
         }
 
-        // Buat PO Header
         PurchaseOrderHeader poH = new PurchaseOrderHeader();
         poH.setCreatedBy(poHDTO.getCreatedBy());
         poH.setUpdatedBy(poHDTO.getCreatedBy());
         poH.setDescription(poHDTO.getDescription());
         poH.setDatetime(LocalDateTime.now());
 
-        // Buat PO Details dari map yang sudah dikelompokkan
         List<PurchaseOrderDetail> poDetails = itemQuantityMap.entrySet().stream()
             .map(entry -> createDetail(entry.getKey(), entry.getValue(), poH, existingItems))
             .toList();
 
-        // Hitung total
         BigDecimal totalCost = calculateTotalCost(poDetails);
         BigDecimal totalPrice = calculateTotalPrice(poDetails);
 
@@ -86,13 +77,11 @@ public class PurchaseOrderService {
         return convertToDTO(savedPoH);
     }
 
-    // ----------------------- UPDATE PURCHASE ORDER -----------------------
     @Transactional
     public PurchaseOrderHeaderDTO updatePO(int id, PurchaseOrderHeaderDTO poHDTO) {
         PurchaseOrderHeader poH = poHRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Purchase order not found with ID: " + id));
 
-        // Kelompokkan itemId dan jumlahkan qty
         Map<Integer, Integer> itemQuantityMap = poHDTO.getPoDetails().stream()
             .collect(Collectors.toMap(
                 PurchaseOrderDetailDTO::getItemId,
@@ -100,19 +89,16 @@ public class PurchaseOrderService {
                 Integer::sum
             ));
 
-        // Validasi item
         List<Integer> itemIds = new ArrayList<>(itemQuantityMap.keySet());
         List<Item> existingItems = itemRepository.findAllById(itemIds);
         if (existingItems.size() != itemIds.size()) {
             throw new RuntimeException("One or more items not found");
         }
 
-        // Update header
         poH.setUpdatedBy(poHDTO.getUpdatedBy());
         poH.setDescription(poHDTO.getDescription());
         poH.setDatetime(LocalDateTime.now());
 
-        // Update atau tambahkan details
         itemQuantityMap.forEach((itemId, qty) -> {
             poDRepository.findByPurchaseOrderHeaderIdAndItemId(poH.getId(), itemId)
                 .ifPresentOrElse(
@@ -121,10 +107,8 @@ public class PurchaseOrderService {
                 );
         });
 
-        // Hapus details yang tidak ada di request
         poH.getDetails().removeIf(detail -> !itemQuantityMap.containsKey(detail.getItemId()));
 
-        // Hitung ulang total
         BigDecimal totalCost = calculateTotalCost(poH.getDetails());
         BigDecimal totalPrice = calculateTotalPrice(poH.getDetails());
         poH.setTotalCost(totalCost);
@@ -133,7 +117,6 @@ public class PurchaseOrderService {
         return convertToDTO(poHRepository.save(poH));
     }
 
-    // ----------------------- DELETE PURCHASE ORDER -----------------------
     @Transactional
     public void deletePO(int id) {
         PurchaseOrderHeader poH = poHRepository.findById(id)
@@ -143,7 +126,6 @@ public class PurchaseOrderService {
         poHRepository.delete(poH);
     }
 
-    // ======================= HELPER METHODS =======================
     private PurchaseOrderDetail createDetail(Integer itemId, Integer qty, PurchaseOrderHeader header, List<Item> items) {
         Item item = items.stream()
             .filter(i -> i.getId().equals(itemId))
