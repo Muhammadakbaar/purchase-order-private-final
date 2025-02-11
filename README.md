@@ -1,2 +1,4 @@
-# purchase_order
-oder
+# Bagaimana menjalankan Aplikasi ini
+
+## Clone atau unzip filenya
+
