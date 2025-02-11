@@ -7,5 +7,8 @@
 4. Jika anda tidak menginstall maven maka jalankan dengan perntah ./ mvnw spring-boot:run
 5. Jika Sudah berhasil dijalankan anda bisa mencoba API menggunakan postman collection yang sudah tersedia pada resource
 
+Jika mau melihat lebih lengakap atau penjelasan lebih lengkap dapat dilihat disini
+https://github.com/Muhammadakbaar/purchase-order-private-final/tree/master
+
 ```
 
